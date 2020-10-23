@@ -7,6 +7,13 @@ import (
 	assert "github.com/stretchr/testify/require"
 )
 
+func TestCreateSandboxProcessorToken(t *testing.T) {
+	sandboxResp, err := testClient.CreateSandboxProcessorToken(sandboxInstitution)
+
+	assert.Nil(t, err)
+	assert.True(t, strings.HasPrefix(sandboxResp.ProcessorToken, "processor-sandbox"))
+}
+
 func TestCreateSandboxPublicToken(t *testing.T) {
 	sandboxResp, err := testClient.CreateSandboxPublicToken(sandboxInstitution, testProducts)
 

@@ -5,6 +5,16 @@ import (
 	"errors"
 )
 
+type createSandboxProcessorTokenRequest struct {
+	ClientID        string   `json:"client_id"`
+	Secret          string   `json:"secret"`
+	InstitutionID   string   `json:"institution_id"`
+}
+
+type CreateSandboxProcessorTokenResponse struct {
+	ProcessorToken string `json:"processor_token"`
+}
+
 type createSandboxPublicTokenRequest struct {
 	InstitutionID   string   `json:"institution_id"`
 	InitialProducts []string `json:"initial_products"`
@@ -38,6 +48,25 @@ type setSandboxItemVerificationStatusRequest struct {
 
 type SetSandboxItemVerificationStatusResponse struct {
 	APIResponse
+}
+
+func (c *Client) CreateSandboxProcessorToken(institutionID string) (resp CreateSandboxProcessorTokenResponse, err error) {
+	if institutionID == "" {
+		return resp, errors.New("/sandbox/processor_token/create - institution id must be specified")
+	}
+
+	jsonBody, err := json.Marshal(createSandboxProcessorTokenRequest{
+		ClientID:      c.clientID,
+		Secret:        c.secret,
+		InstitutionID: institutionID,
+	})
+
+	if err != nil {
+		return resp, err
+	}
+
+	err = c.Call("/sandbox/processor_token/create", jsonBody, &resp)
+	return resp, err
 }
 
 func (c *Client) CreateSandboxPublicToken(institutionID string, initialProducts []string) (resp CreateSandboxPublicTokenResponse, err error) {
